@@ -8,7 +8,7 @@ The aim is evidence, not a predetermined winner. A simple baseline beating a com
 
 ## Quick start
 
-Python 3.10–3.12 is recommended; the core also supports Python 3.9.
+Python 3.10-3.12 is recommended; the core also supports Python 3.9.
 
 ```bash
 python3 -m venv .venv
@@ -34,6 +34,14 @@ The end date is exclusive. Yahoo data is a convenience research source; download
 
 `configs/quick.yaml` runs a smaller preset with no hyperparameter search; `configs/research.yaml` runs the complete nested search including optional neural and boosting models. To select a subset, add `--models zero,ridge,regime_mixture`. The zero-return baseline is always included.
 
+Completed folds and final fits are saved atomically in the run's local `.checkpoints/`
+directory. After an interruption, repeat the same command with `--resume`.
+Resuming verifies the data, configuration, features, algorithm source, and library
+versions before reusing results. A changed experiment requires a fresh output directory.
+Checkpoints contain serialized Python objects, so only resume your own trusted runs.
+Use `--workers 3` to run independent fits in three separate processes. Worker count
+can change when resuming; it does not change the search space or selection rule.
+
 ## How the experiment works
 
 ```mermaid
@@ -56,7 +64,8 @@ flowchart LR
 - **Execution accounting:** next-open timing, volatility-scaled signals, gross exposure limits, turnover costs, and terminal liquidation. No broker integration or live order placement.
 - **Uncertainty analysis:** a date-clustered moving-block bootstrap compares final forecast error with the zero-return baseline.
 
-See [methodology](docs/methodology.md) and [model details](docs/models.md).
+See [methodology](docs/methodology.md), [model details](docs/models.md), and
+[runtime and reproducibility notes](docs/runtime.md).
 
 ## Models
 
@@ -79,7 +88,7 @@ Every run writes `summary.json`, `tuning.json`, development and holdout leaderbo
 
 The final forecast uses the latest price date, requiring complete features for every ticker in the original training universe. The saved model is deliberately frozen before calibration and holdout; its training date is included in each forecast. Retraining and recalibration require a new experiment. Only load trusted local joblib artifacts, since deserialization executes Python objects.
 
-The committed `data/` snapshot and `results/` experiment document the initial real-data study. Local virtual environments, caches, scratch files, and serialized models are excluded from Git; commands reproduce the artifacts.
+The committed `data/` snapshot and `results/` experiment document the initial real-data study, including its compressed selected-model checkpoint. Local virtual environments, caches, scratch files, and checkpoints from other runs are excluded from Git; commands reproduce the artifacts.
 
 ## CSV contract
 

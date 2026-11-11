@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "scope": "Diagnostic numerical checks only; does not establish all benchmark computations correct or model convergence.",
+  "environment": {
+    "numpy": "2.0.2",
+    "sklearn": "1.6.1",
+    "python": "3.9.6",
+    "macos": "27.2",
+    "machine": "arm64",
+    "cpu": "Apple M6",
+    "numpy_blas": "Accelerate (verified separately via numpy.show_config)"
+  },
+  "identity_controls": {
+    "sizes_checked": [
+      14,
+      15,
+      16,
+      32,
+      64,
+      128
+    ],
+    "sizes_issuing_warnings": [
+      15,
+      16,
+      32,
+      64,
+      128
+    ],
+    "all_exact_identities": true,
+    "all_outputs_finite": true,
+    "warning_types": [
+      "divide by zero encountered in matmul",
+      "overflow encountered in matmul",
+      "invalid value encountered in matmul"
+    ]
+  },
+  "diagnostic_fit": {
+    "training_rows": 120,
+    "prediction_rows": 40,
+    "features": 37,
+    "source": "first 160 feature-complete rows of data/market.csv",
+    "model": "mlp",
+    "hidden_layer_sizes": [
+      24
+    ],
+    "max_iter": 80,
+    "seed": 19
+  },
+  "product_checks": {
+    "audited_products": 402,
+    "products_issuing_warnings": 321,
+    "individual_warnings": 963,
+    "all_outputs_finite": true,
+    "einsum_reference": {
+      "optimize": false,
+      "rtol": 1e-12,
+      "atol": 1e-12,
+      "all_outputs_compared": true
+    },
+    "all_products_match_einsum": true,
+    "max_abs_einsum_error": 5.684341886080802e-14,
+    "scalar_reference": "math.fsum over first, middle and last output rows/columns; up to nine entries per product",
+    "max_abs_scalar_error": 7.105427357601002e-15
+  },
+  "prediction_checks": {
+    "all_outputs_finite": true,
+    "reference": "Complete fitted MLP forward pass with unoptimized einsum products and the same fitted scalers",
+    "max_abs_error": 3.469446951953614e-18
+  },
+  "separate_convergence_warnings": [
+    "Stochastic Optimizer: Maximum iterations (80) reached and the optimization hasn't converged yet."
+  ],
+  "interpretation": "Observed products are numerically consistent with independent references; sampled warnings are consistent with documented Accelerate/ARM floating-point status behavior.",
+  "limits": [
+    "Does not certify every operation in a full research run or another environment.",
+    "Does not demonstrate optimizer convergence or predictive performance.",
+    "Independent references use the same floating-point inputs and are not arbitrary-precision proofs."
+  ],
+  "primary_sources": [
+    "https://github.com/numpy/numpy/issues/28687",
+    "https://github.com/numpy/numpy/issues/29820"
+  ]
+}

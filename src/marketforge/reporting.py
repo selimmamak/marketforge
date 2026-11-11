@@ -9,6 +9,46 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+MODEL_NAMES = {
+    "zero": "Zero Return",
+    "historical_mean": "Historical Mean",
+    "ridge": "Ridge",
+    "elastic_net": "Elastic Net",
+    "random_forest": "Random Forest",
+    "extra_trees": "Extra Trees",
+    "hist_gradient_boosting": "Histogram Gradient Boosting",
+    "svr": "Support Vector Regression",
+    "mlp": "Multilayer Perceptron",
+    "regime_mixture": "Regime Mixture",
+    "xgboost": "XGBoost",
+    "torch_attention": "Feature Attention Transformer",
+    "torch_residual": "Gated Residual Network",
+    "temporal_ensemble": "Temporal Ensemble",
+}
+
+METRIC_NAMES = {
+    "rmse": "RMSE",
+    "mae": "MAE",
+    "r2": "R²",
+    "spearman_ic": "Spearman IC",
+    "n_observations": "Observations",
+    "ci_low": "95% CI Lower Bound",
+    "ci_high": "95% CI Upper Bound",
+    "cost_bps": "Cost (Basis Points)",
+    "n_bootstrap": "Bootstrap Samples",
+    "sum_cost_as_period_equity_fraction": "Sum of Period Cost Fractions",
+}
+
+
+def _model_name(value: Any) -> str:
+    name = str(value)
+    return MODEL_NAMES.get(name, name.replace("_", " "))
+
+
+def _metric_name(value: Any) -> str:
+    name = str(value)
+    return METRIC_NAMES.get(name, name.replace("_", " ").title())
+
 
 def _safe(value: Any) -> str:
     return html.escape(str(value), quote=True)
@@ -29,7 +69,7 @@ def _metrics(values: Any) -> str:
     for key, value in values.items():
         if isinstance(value, dict):
             continue
-        rows.append(f"<tr><th>{_safe(key.replace('_', ' '))}</th><td>{_format(value)}</td></tr>")
+        rows.append(f"<tr><th>{_safe(_metric_name(key))}</th><td>{_format(value)}</td></tr>")
     return "<table class='metrics'><tbody>" + "".join(rows) + "</tbody></table>"
 
 
@@ -72,7 +112,11 @@ def _equity_chart(daily: pd.DataFrame) -> str:
 def _table(frame: pd.DataFrame) -> str:
     if frame.empty:
         return "<p>No results available.</p>"
-    return "<div class='table-scroll'>" + frame.to_html(index=False, border=0, classes="leaderboard", escape=True, float_format=lambda value: f"{value:.6g}") + "</div>"
+    display = frame.copy()
+    if "model" in display:
+        display["model"] = display["model"].map(_model_name)
+    display = display.rename(columns=_metric_name)
+    return "<div class='table-scroll'>" + display.to_html(index=False, border=0, classes="leaderboard", escape=True, float_format=lambda value: f"{value:.6g}") + "</div>"
 
 
 def render_report(summary: dict[str, Any], leaderboard: pd.DataFrame, daily: pd.DataFrame, output_path: Path) -> None:
@@ -82,10 +126,15 @@ def render_report(summary: dict[str, Any], leaderboard: pd.DataFrame, daily: pd.
     winner = summary.get("winner", "No selected model")
     if isinstance(winner, dict):
         winner = winner.get("name", winner.get("model", str(winner)))
+    winner = _model_name(winner)
     holdout = summary.get("holdout_metrics", {})
     development = summary.get("development_rmse", "See leaderboard")
     source = summary.get("data_source", summary.get("dataset", {}).get("source", "See run manifest"))
     errors = summary.get("model_errors", {})
+    display_errors = (
+        {_model_name(name): detail for name, detail in errors.items()}
+        if isinstance(errors, dict) else errors
+    )
     diagnostics = summary.get("holdout_leaderboard", [])
     holdout_table = _table(pd.DataFrame(diagnostics)) if isinstance(diagnostics, list) and diagnostics else ""
     raw = json.dumps(summary, indent=2, default=str, ensure_ascii=False)
@@ -102,8 +151,8 @@ def render_report(summary: dict[str, Any], leaderboard: pd.DataFrame, daily: pd.
 <div class="columns"><section><h2>Frozen model: holdout forecasts</h2>{_metrics(holdout)}</section><section><h2>Holdout strategy</h2>{_metrics(summary.get('backtest_metrics', {}))}</section></div>
 <div class="columns"><section><h2>Uncertainty calibration</h2>{_metrics(summary.get('interval', {}))}<p>Calibration uses an earlier, separate chronological segment. Serial dependence and changing regimes can invalidate exchangeability; inspect realized holdout coverage.</p></section><section><h2>Paired block bootstrap</h2>{_metrics(summary.get('bootstrap', {}))}<p>RMSE difference is selected model minus reference. Negative values favor the selected model. Date clusters preserve the panel structure; contiguous blocks preserve some serial dependence. This interval does not adjust for searching many models.</p></section></div>
 <section><h2>Evaluation assumptions</h2><ul><li>Features are available at the signal close. Targets run from the next open to a later open; training labels overlapping an evaluation boundary are removed.</li><li>Hyperparameters and the winning model are selected inside the research segment. Calibration and the final holdout do not tune the selection.</li><li>Simple-return forecast accuracy and trading profitability answer different questions. Volatility-scaled directional positions do not optimize portfolio covariance.</li><li>Adjusted historical prices are retrospective. A fixed present-day ticker list has survivorship and selection bias. Delisted securities and point-in-time corporate actions require a specialist data source.</li><li>Borrow costs, financing, cash yield, taxes, order-book liquidity, and nonlinear market impact are omitted. Shorting availability and idealized open fills are not guaranteed.</li></ul></section>
-{('<section><h2>Other holdout results — diagnostic only</h2><p>These results do not alter the selected model. Repeatedly inspecting and changing the experiment turns this holdout into development data.</p>' + holdout_table + '</section>') if holdout_table else ''}
-{('<section><h2>Model execution notes</h2><pre>' + _safe(json.dumps(errors, indent=2, default=str)) + '</pre></section>') if errors else ''}
+{('<section><h2>Other holdout results. Diagnostic only.</h2><p>These results do not alter the selected model. Repeatedly inspecting and changing the experiment turns this holdout into development data.</p>' + holdout_table + '</section>') if holdout_table else ''}
+{('<section><h2>Model execution notes</h2><pre>' + _safe(json.dumps(display_errors, indent=2, default=str)) + '</pre></section>') if errors else ''}
 <details><summary>Run manifest and complete metrics</summary><pre>{_safe(raw)}</pre></details>
 <footer>MarketForge · Reproducible forecasting research · Local report; no external scripts, stylesheets, fonts, or tracking.</footer>
 </main></body></html>"""

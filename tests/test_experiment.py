@@ -1,6 +1,7 @@
 """End-to-end tests of the information boundaries, artifact and ensemble."""
 
 import json
+from dataclasses import replace
 
 import joblib
 import numpy as np
@@ -215,3 +216,231 @@ def test_forecast_rejects_stale_feature_date(completed_run, monkeypatch):
     monkeypatch.setattr(experiment, "build_dataset", lambda *args, **kwargs: stale)
     with pytest.raises(ValueError, match="stale forecast"):
         experiment.forecast_latest(prices, output / "model.joblib")
+
+
+def _assert_identical_research_outputs(first, second):
+    for name in (
+        "leaderboard.csv",
+        "development_predictions.csv",
+        "holdout_predictions.csv",
+        "all_holdout_predictions.csv",
+        "holdout_metrics.csv",
+        "daily_returns.csv",
+    ):
+        pd.testing.assert_frame_equal(pd.read_csv(first / name), pd.read_csv(second / name))
+    assert json.loads((first / "tuning.json").read_text()) == json.loads(
+        (second / "tuning.json").read_text()
+    )
+
+
+def test_interrupted_outer_fold_is_resumed_without_refitting(completed_run, tmp_path, monkeypatch):
+    prices, config, clean, expected = completed_run
+    output = tmp_path / "interrupted"
+    original_save = experiment._save_checkpoint
+
+    def interrupt_after_first_save(path, signature, identity, payload):
+        original_save(path, signature, identity, payload)
+        raise KeyboardInterrupt("Simulate a stopped process after a durable fold")
+
+    monkeypatch.setattr(experiment, "_save_checkpoint", interrupt_after_first_save)
+    with pytest.raises(KeyboardInterrupt):
+        experiment.run_experiment(prices, config, output)
+    assert (output / ".checkpoints" / "outer-zero-0.joblib").is_file()
+    monkeypatch.setattr(experiment, "_save_checkpoint", original_save)
+    computed = []
+    original_outer = experiment._outer_payload
+
+    def track_outer(name, candidates, research, features, configuration, fold, train, test):
+        computed.append((name, fold))
+        return original_outer(
+            name, candidates, research, features, configuration, fold, train, test
+        )
+
+    monkeypatch.setattr(experiment, "_outer_payload", track_outer)
+    actual = experiment.run_experiment(prices, config, output, resume=True)
+    assert ("zero", 0) not in computed
+    assert len(computed) == 3
+    assert actual["winner"] == expected["winner"]
+    assert actual["ensemble_weights"] == expected["ensemble_weights"]
+    _assert_identical_research_outputs(clean, output)
+
+
+def test_completed_resume_restores_artifacts_without_any_fit(completed_run, monkeypatch):
+    prices, config, output, expected = completed_run
+    expected_predictions = pd.read_csv(output / "holdout_predictions.csv")
+    for name in ("model.joblib", "summary.json", "report.html"):
+        (output / name).unlink()
+
+    def forbidden_fit(*args, **kwargs):
+        raise AssertionError("A completed checkpoint must not be refitted")
+
+    monkeypatch.setattr(experiment, "_fit", forbidden_fit)
+    monkeypatch.setattr(experiment, "_tune", forbidden_fit)
+    # Canonical sorting allows equivalent source rows in a different order.
+    actual = experiment.run_experiment(prices.iloc[::-1], config, output, resume=True)
+    assert actual["winner"] == expected["winner"]
+    assert actual["holdout_metrics"] == expected["holdout_metrics"]
+    pd.testing.assert_frame_equal(
+        pd.read_csv(output / "holdout_predictions.csv"), expected_predictions
+    )
+    assert all(
+        (output / name).is_file() for name in ("model.joblib", "summary.json", "report.html")
+    )
+
+
+def test_interrupted_final_fit_restores_saved_estimator(completed_run, tmp_path, monkeypatch):
+    prices, config, clean, _ = completed_run
+    output = tmp_path / "interrupted_final"
+    original_save = experiment._save_checkpoint
+
+    def interrupt_after_final_save(path, signature, identity, payload):
+        original_save(path, signature, identity, payload)
+        if identity == {"stage": "final", "model": "zero"}:
+            raise KeyboardInterrupt("Stop after the first final estimator is durable")
+
+    monkeypatch.setattr(experiment, "_save_checkpoint", interrupt_after_final_save)
+    with pytest.raises(KeyboardInterrupt):
+        experiment.run_experiment(prices, config, output)
+    monkeypatch.setattr(experiment, "_save_checkpoint", original_save)
+    computed = []
+    original_final = experiment._final_payload
+
+    def track_final(name, *args, **kwargs):
+        computed.append(name)
+        return original_final(name, *args, **kwargs)
+
+    monkeypatch.setattr(experiment, "_final_payload", track_final)
+    experiment.run_experiment(prices, config, output, resume=True)
+    assert computed == ["ridge"]
+    _assert_identical_research_outputs(clean, output)
+
+
+@pytest.mark.parametrize(
+    "changed", ["data", "config", "features", "registry", "source", "versions"]
+)
+def test_resume_rejects_changed_experiment_identity(completed_run, monkeypatch, changed):
+    prices, config, output, _ = completed_run
+    manifest = output / ".checkpoints" / "manifest.json"
+    original_manifest = manifest.read_bytes()
+    if changed == "data":
+        prices = prices.copy()
+        prices["volume"] *= 2
+    elif changed == "config":
+        config = replace(config, seed=config.seed + 1)
+    elif changed == "features":
+        frame = build_dataset(prices, config.horizon)
+        frame["f_new"] = 0.0
+        monkeypatch.setattr(experiment, "build_dataset", lambda *args, **kwargs: frame)
+    elif changed == "registry":
+        original = experiment.model_candidates
+
+        def changed_registry(*args, **kwargs):
+            registry = original(*args, **kwargs)
+            registry["ridge"][0]["alpha"] = 123.0
+            return registry
+
+        monkeypatch.setattr(experiment, "model_candidates", changed_registry)
+    elif changed == "source":
+        monkeypatch.setattr(experiment, "_source_hashes", lambda: {"experiment": "changed"})
+    elif changed == "versions":
+        monkeypatch.setattr(experiment, "_versions", lambda: {"python": "changed"})
+    with pytest.raises(ValueError, match="manifest mismatch"):
+        experiment.run_experiment(prices, config, output, resume=True)
+    assert manifest.read_bytes() == original_manifest
+
+
+def test_resume_requires_manifest_and_preserves_unrelated_files(tmp_path):
+    prices = generate_synthetic(n_days=100)
+    output = tmp_path / "unrelated"
+    output.mkdir()
+    sentinel = output / "important.txt"
+    sentinel.write_text("keep this file")
+    with pytest.raises(ValueError, match="valid checkpoint manifest"):
+        experiment.run_experiment(prices, ExperimentConfig(), output, resume=True)
+    assert sentinel.read_text() == "keep this file"
+    with pytest.raises(ValueError, match="not empty"):
+        experiment.run_experiment(prices, ExperimentConfig(), output)
+
+
+def test_damaged_checkpoint_cannot_silently_change_results(completed_run):
+    prices, config, output, _ = completed_run
+    (output / ".checkpoints" / "outer-zero-0.joblib").write_bytes(b"interrupted invalid bytes")
+    before = (output / "summary.json").read_bytes()
+    with pytest.raises(ValueError, match="Cannot load checkpoint"):
+        experiment.run_experiment(prices, config, output, resume=True)
+    assert (output / "summary.json").read_bytes() == before
+
+
+def test_atomic_checkpoint_failure_preserves_previous_complete_record(tmp_path, monkeypatch):
+    path = tmp_path / "checkpoint.joblib"
+    identity = {"stage": "outer", "model": "zero", "fold": 0}
+    payload = {"status": "failed", "error": "original diagnostic"}
+    experiment._save_checkpoint(path, "signature", identity, payload)
+    previous = path.read_bytes()
+
+    def interrupted_dump(record, temporary, **kwargs):
+        temporary.write_bytes(b"partial replacement")
+        raise OSError("Simulated interrupted disk write")
+
+    monkeypatch.setattr(experiment.joblib, "dump", interrupted_dump)
+    with pytest.raises(OSError, match="interrupted disk"):
+        experiment._save_checkpoint(path, "signature", identity, payload)
+    assert path.read_bytes() == previous
+    assert list(tmp_path.iterdir()) == [path]
+
+
+def test_optional_model_failures_are_checkpointed_and_not_retried(
+    completed_run, tmp_path, monkeypatch
+):
+    prices, config, _, _ = completed_run
+    output = tmp_path / "optional_failure"
+    original = experiment._fit
+
+    def fail_ridge(name, *args, **kwargs):
+        if name == "ridge":
+            raise ImportError("Optional dependency unavailable")
+        return original(name, *args, **kwargs)
+
+    monkeypatch.setattr(experiment, "_fit", fail_ridge)
+    first = experiment.run_experiment(prices, config, output)
+    assert set(first["model_errors"]) == {"ridge"}
+    assert first["winner"] == "zero"
+
+    def forbidden_fit(*args, **kwargs):
+        raise AssertionError("Cached successful fits and failures must both be reused")
+
+    monkeypatch.setattr(experiment, "_fit", forbidden_fit)
+    second = experiment.run_experiment(prices, config, output, resume=True)
+    assert second["model_errors"] == first["model_errors"]
+    assert second["winner"] == first["winner"]
+
+
+def test_parallel_jobs_match_serial_outputs(completed_run, tmp_path):
+    prices, config, serial, expected = completed_run
+    parallel = tmp_path / "parallel"
+    actual = experiment.run_experiment(prices, config, parallel, workers=2)
+    assert actual["winner"] == expected["winner"]
+    assert actual["ensemble_weights"] == expected["ensemble_weights"]
+    _assert_identical_research_outputs(serial, parallel)
+    # Worker count is execution policy, not a change to experiment identity.
+    resumed = experiment.run_experiment(prices, config, parallel, resume=True, workers=1)
+    assert resumed["holdout_metrics"] == actual["holdout_metrics"]
+
+
+def test_cli_exposes_resume_and_worker_count():
+    from marketforge.cli import _parser
+
+    args = _parser().parse_args(
+        [
+            "run",
+            "--data",
+            "prices.csv",
+            "--output",
+            "results/study",
+            "--resume",
+            "--workers",
+            "3",
+        ]
+    )
+    assert args.resume is True
+    assert args.workers == 3

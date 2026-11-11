@@ -29,10 +29,20 @@ def _parser():
     run.add_argument("--config", type=Path)
     run.add_argument("--output", type=Path, required=True)
     run.add_argument("--models", help="Comma-separated registry names (zero is always included)")
+    run.add_argument(
+        "--resume", action="store_true", help="Resume verified checkpoints in the output directory"
+    )
+    run.add_argument(
+        "--workers", type=int, default=1, help="Independent spawned fit workers (default: 1)"
+    )
     demo = sub.add_parser("demo", help="Offline synthetic smoke experiment, not market evidence")
     demo.add_argument("--days", type=int, default=900)
     demo.add_argument("--output", type=Path, required=True)
     demo.add_argument("--models", default="zero,historical_mean,ridge,extra_trees,regime_mixture")
+    demo.add_argument("--resume", action="store_true", help="Resume verified demo checkpoints")
+    demo.add_argument(
+        "--workers", type=int, default=1, help="Independent spawned fit workers (default: 1)"
+    )
     forecast = sub.add_parser("forecast", help="Predict latest rows from a trusted local artifact")
     forecast.add_argument("--data", type=Path, required=True)
     forecast.add_argument("--artifact", type=Path, required=True, help="Trusted local model.joblib")
@@ -49,20 +59,28 @@ def main(argv=None):
             args.output.parent.mkdir(parents=True, exist_ok=True)
             prices.to_csv(args.output, index=False)
             metadata = {
-                "provider": "Yahoo Finance via yfinance", "adjusted": True,
-                "tickers": args.tickers, "requested_start": args.start,
+                "provider": "Yahoo Finance via yfinance",
+                "adjusted": True,
+                "tickers": args.tickers,
+                "requested_start": args.start,
                 "requested_end_exclusive": args.end,
                 "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
-                "actual_start": str(prices.date.min()), "actual_end": str(prices.date.max()),
-                "rows": len(prices), "sha256": hashlib.sha256(args.output.read_bytes()).hexdigest(),
+                "actual_start": str(prices.date.min()),
+                "actual_end": str(prices.date.max()),
+                "rows": len(prices),
+                "sha256": hashlib.sha256(args.output.read_bytes()).hexdigest(),
             }
             write_json(args.output.with_suffix(".metadata.json"), metadata)
             print(f"Saved {len(prices):,} rows to {args.output}")
         elif args.command in {"run", "demo"}:
             if args.command == "demo":
                 config = ExperimentConfig(
-                    quick=True, holdout_size=42, calibration_size=42, test_size=42,
-                    inner_splits=1, bootstrap_samples=100,
+                    quick=True,
+                    holdout_size=42,
+                    calibration_size=42,
+                    test_size=42,
+                    inner_splits=1,
+                    bootstrap_samples=100,
                 )
                 prices = generate_synthetic(n_days=args.days, seed=config.seed)
                 source = "synthetic demonstration; not financial performance evidence"
@@ -73,7 +91,14 @@ def main(argv=None):
             if args.models:
                 config.models = [name.strip() for name in args.models.split(",") if name.strip()]
                 config.__post_init__()
-            summary = run_experiment(prices, config, args.output, source)
+            summary = run_experiment(
+                prices,
+                config,
+                args.output,
+                source,
+                resume=args.resume,
+                workers=args.workers,
+            )
             print(f"Development-selected model: {summary['winner']}")
             print(f"Holdout RMSE: {summary['holdout_metrics']['rmse']:.6f}")
             print(f"Report: {args.output / 'report.html'}")

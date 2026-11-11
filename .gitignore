@@ -12,5 +12,7 @@ dist/
 !.env.example
 work/
 *.joblib
+!results/initial-study/model.joblib
+.checkpoints/
 data/cache/
 runs/
