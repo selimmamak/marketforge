@@ -1,0 +1,445 @@
+{
+  "winner": "random_forest",
+  "selection_metric": "pooled development out-of-fold RMSE",
+  "development_rmse": 0.01174470678222672,
+  "holdout_metrics": {
+    "n_observations": 504,
+    "rmse": 0.017093065625586903,
+    "mae": 0.011622943387768571,
+    "mean_error": -0.00033113385555111834,
+    "direction_accuracy": 0.5257936507936508,
+    "spearman_ic": -0.020943832525825722,
+    "r2": -0.035167615825912435
+  },
+  "backtest_metrics": {
+    "total_return": -0.00892311342069707,
+    "annualized_return": -0.01776660488827638,
+    "annualized_volatility": 0.142100548313706,
+    "sharpe": -0.0555729100602574,
+    "max_drawdown": -0.11310189833352147,
+    "positive_period_fraction": 0.5238095238095238,
+    "periods": 126,
+    "mean_turnover": 0.28886128717600046,
+    "sum_cost_as_period_equity_fraction": 0.018198261092088025,
+    "mean_gross_exposure": 1.0,
+    "cost_bps": 5.0,
+    "benchmark": {
+      "total_return": 0.12244776965467818,
+      "annualized_return": 0.2598889956027651,
+      "annualized_volatility": 0.1761174996719895,
+      "sharpe": 1.3998651381987772,
+      "max_drawdown": -0.10666612042999324,
+      "positive_period_fraction": 0.5317460317460317,
+      "periods": 126
+    },
+    "benchmark_name": "Equal-weight long, rebalanced each session"
+  },
+  "holdout_leaderboard": [
+    {
+      "model": "zero",
+      "n_observations": 504,
+      "rmse": 0.016829389022166106,
+      "mae": 0.01152680065482931,
+      "mean_error": -0.0009906534967566028,
+      "direction_accuracy": 0.0,
+      "spearman_ic": 0.0,
+      "r2": -0.003477077019389485
+    },
+    {
+      "model": "historical_mean",
+      "n_observations": 504,
+      "rmse": 0.01680048610428525,
+      "mae": 0.011513561153572195,
+      "mean_error": -9.691662144729323e-05,
+      "direction_accuracy": 0.5297619047619048,
+      "spearman_ic": 0.0,
+      "r2": -3.327877175829386e-05
+    },
+    {
+      "model": "ridge",
+      "n_observations": 504,
+      "rmse": 0.016902959469306228,
+      "mae": 0.011616188928545629,
+      "mean_error": -4.199372413944983e-05,
+      "direction_accuracy": 0.5238095238095238,
+      "spearman_ic": 0.014402411556122954,
+      "r2": -0.012269746152066663
+    },
+    {
+      "model": "elastic_net",
+      "n_observations": 504,
+      "rmse": 0.01687008486043931,
+      "mae": 0.011589933964444516,
+      "mean_error": -6.737556339649962e-05,
+      "direction_accuracy": 0.5317460317460317,
+      "spearman_ic": 0.017939323043352336,
+      "r2": -0.008336043201791599
+    },
+    {
+      "model": "random_forest",
+      "n_observations": 504,
+      "rmse": 0.017093065625586903,
+      "mae": 0.011622943387768571,
+      "mean_error": -0.00033113385555111834,
+      "direction_accuracy": 0.5257936507936508,
+      "spearman_ic": -0.020943832525825722,
+      "r2": -0.035167615825912435
+    },
+    {
+      "model": "extra_trees",
+      "n_observations": 504,
+      "rmse": 0.016853913331843974,
+      "mae": 0.011548968322091308,
+      "mean_error": -0.00020322988299988434,
+      "direction_accuracy": 0.5238095238095238,
+      "spearman_ic": -0.006388590174318803,
+      "r2": -0.006403804006806624
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "n_observations": 504,
+      "rmse": 0.017178078966595015,
+      "mae": 0.011614124209200173,
+      "mean_error": -0.00028044530594864705,
+      "direction_accuracy": 0.5178571428571429,
+      "spearman_ic": 0.006790330985226074,
+      "r2": -0.04549015288052738
+    },
+    {
+      "model": "svr",
+      "n_observations": 504,
+      "rmse": 0.0168694767453135,
+      "mae": 0.011491248021093189,
+      "mean_error": 0.0006288581863429872,
+      "direction_accuracy": 0.5257936507936508,
+      "spearman_ic": 0.05994527882211682,
+      "r2": -0.008263349631708161
+    },
+    {
+      "model": "mlp",
+      "n_observations": 504,
+      "rmse": 0.018461564785691546,
+      "mae": 0.01259440763459087,
+      "mean_error": -0.00027384130407627955,
+      "direction_accuracy": 0.5218253968253969,
+      "spearman_ic": 0.049929934771381156,
+      "r2": -0.20755737412748698
+    },
+    {
+      "model": "regime_mixture",
+      "n_observations": 504,
+      "rmse": 0.016883890336273164,
+      "mae": 0.011533623919306525,
+      "mean_error": -2.761111895263492e-06,
+      "direction_accuracy": 0.5238095238095238,
+      "spearman_ic": 0.036344310375371544,
+      "r2": -0.009987043166697296
+    },
+    {
+      "model": "xgboost",
+      "n_observations": 504,
+      "rmse": 0.01698674590002835,
+      "mae": 0.01155738665826831,
+      "mean_error": -0.00028448910700721637,
+      "direction_accuracy": 0.5,
+      "spearman_ic": -0.001173908927388053,
+      "r2": -0.022330076464248227
+    },
+    {
+      "model": "torch_attention",
+      "n_observations": 504,
+      "rmse": 0.016928232352158745,
+      "mae": 0.011546957980324894,
+      "mean_error": -8.305691564108952e-05,
+      "direction_accuracy": 0.5079365079365079,
+      "spearman_ic": 0.01595781276508793,
+      "r2": -0.015299050016702287
+    },
+    {
+      "model": "torch_residual",
+      "n_observations": 504,
+      "rmse": 0.018499103304781016,
+      "mae": 0.012873996312934134,
+      "mean_error": 0.00020965193950650508,
+      "direction_accuracy": 0.5337301587301587,
+      "spearman_ic": 0.035725767975831955,
+      "r2": -0.21247310055546076
+    },
+    {
+      "model": "temporal_ensemble",
+      "n_observations": 504,
+      "rmse": 0.016867286368355192,
+      "mae": 0.011496761069851669,
+      "mean_error": -0.00014661985788004742,
+      "direction_accuracy": 0.5317460317460317,
+      "spearman_ic": 0.05993337476320767,
+      "r2": -0.008001535532186299
+    }
+  ],
+  "bootstrap": {
+    "mean_delta": 0.0002636766034207899,
+    "bootstrap_mean_delta": 0.0002572090452601356,
+    "ci_low": -0.0001670149060496521,
+    "ci_high": 0.0007800195249668335,
+    "confidence": 0.95,
+    "sampling_units": 126,
+    "block_size": 20,
+    "requested_block_size": 20,
+    "n_bootstrap": 1000,
+    "date_clustered": true
+  },
+  "interval": {
+    "nominal_coverage": 0.9,
+    "holdout_coverage": 0.871031746031746,
+    "radius": 0.024357370095057933,
+    "mean_width": 0.04871474019011587,
+    "calibration_rows": 252,
+    "interpretation": "Empirical coverage; serial dependence invalidates IID guarantees."
+  },
+  "config": {
+    "seed": 42,
+    "horizon": 1,
+    "holdout_size": 126,
+    "calibration_size": 63,
+    "n_splits": 3,
+    "test_size": 63,
+    "min_train_size": 252,
+    "inner_splits": 2,
+    "inner_test_size": 42,
+    "inner_min_train_size": 126,
+    "embargo": 2,
+    "cost_bps": 5.0,
+    "target_vol": 0.1,
+    "max_leverage": 1.0,
+    "signal_threshold": 0.0,
+    "interval_alpha": 0.1,
+    "bootstrap_samples": 1000,
+    "bootstrap_block_size": 20,
+    "include_neural": true,
+    "include_boosting": true,
+    "quick": false,
+    "models": null
+  },
+  "data_source": "data/market.csv",
+  "dataset": {
+    "price_rows": 10920,
+    "labeled_rows": 10672,
+    "tickers": [
+      "AAPL",
+      "MSFT",
+      "QQQ",
+      "SPY"
+    ],
+    "features": 37,
+    "sha256": "887cd79effb1e8b262f92cd25ec3e08b212f575fd5d42bc42b710aab56b9cb86"
+  },
+  "timeline": {
+    "research": {
+      "start": "2016-03-31 00:00:00",
+      "end": "2026-02-02 00:00:00",
+      "rows": 9900
+    },
+    "calibration": {
+      "start": "2026-02-05 00:00:00",
+      "end": "2026-05-06 00:00:00",
+      "rows": 252
+    },
+    "holdout": {
+      "start": "2026-05-11 00:00:00",
+      "end": "2026-11-06 00:00:00",
+      "rows": 504
+    }
+  },
+  "fold_boundaries": [
+    {
+      "fold": 0,
+      "train_start": "2016-03-31 00:00:00",
+      "train_end": "2025-04-29 00:00:00",
+      "latest_train_label": "2025-05-01 00:00:00",
+      "test_start": "2025-05-02 00:00:00",
+      "test_end": "2025-08-01 00:00:00",
+      "train_rows": 9136,
+      "test_rows": 252
+    },
+    {
+      "fold": 1,
+      "train_start": "2016-03-31 00:00:00",
+      "train_end": "2025-07-30 00:00:00",
+      "latest_train_label": "2025-08-01 00:00:00",
+      "test_start": "2025-08-04 00:00:00",
+      "test_end": "2025-10-30 00:00:00",
+      "train_rows": 9388,
+      "test_rows": 252
+    },
+    {
+      "fold": 2,
+      "train_start": "2016-03-31 00:00:00",
+      "train_end": "2025-10-28 00:00:00",
+      "latest_train_label": "2025-10-30 00:00:00",
+      "test_start": "2025-10-31 00:00:00",
+      "test_end": "2026-02-02 00:00:00",
+      "train_rows": 9640,
+      "test_rows": 252
+    }
+  ],
+  "ensemble_weights": {
+    "zero": 0.07979482292629862,
+    "historical_mean": 0.0803366942862129,
+    "ridge": 0.0808913170198876,
+    "elastic_net": 0.08069022684210196,
+    "random_forest": 0.08103215827921417,
+    "extra_trees": 0.07977510428735494,
+    "hist_gradient_boosting": 0.07810457167233806,
+    "svr": 0.074354823437279,
+    "mlp": 0.062254386675080015,
+    "regime_mixture": 0.07915272034407267,
+    "xgboost": 0.07897365122692934,
+    "torch_attention": 0.07977634721799705,
+    "torch_residual": 0.0648631757852335
+  },
+  "ensemble_fold_weights": [
+    {
+      "fold": 0,
+      "weights": [
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693
+      ]
+    },
+    {
+      "fold": 1,
+      "weights": [
+        0.08105505031678183,
+        0.08296224784715708,
+        0.08284445921465093,
+        0.08217138004855679,
+        0.08241233969008252,
+        0.08189972784731159,
+        0.07655330064349976,
+        0.07065777738898942,
+        0.06064340130698866,
+        0.07874514170515928,
+        0.07900626267650103,
+        0.08298590773817496,
+        0.05806300357614608
+      ]
+    },
+    {
+      "fold": 2,
+      "weights": [
+        0.07962092327245451,
+        0.08142876493788696,
+        0.08186885639489039,
+        0.08155077343983753,
+        0.08092275053991323,
+        0.07990550352209969,
+        0.07714676849550184,
+        0.07321549142552466,
+        0.06167516761828837,
+        0.07845345684330213,
+        0.0787910345446567,
+        0.08151828646953967,
+        0.0639022224961043
+      ]
+    }
+  ],
+  "selected_parameters": {
+    "zero": {},
+    "historical_mean": {},
+    "ridge": {
+      "alpha": 10.0
+    },
+    "elastic_net": {
+      "alpha": 0.01,
+      "l1_ratio": 0.1
+    },
+    "random_forest": {
+      "max_depth": 12
+    },
+    "extra_trees": {
+      "max_depth": 6
+    },
+    "hist_gradient_boosting": {
+      "max_leaf_nodes": 7
+    },
+    "svr": {
+      "C": 0.1
+    },
+    "mlp": {
+      "hidden_layer_sizes": [
+        64,
+        32
+      ],
+      "alpha": 1.0
+    },
+    "regime_mixture": {
+      "n_regimes": 3,
+      "alpha": 100.0
+    },
+    "xgboost": {
+      "max_depth": 5,
+      "reg_lambda": 30.0
+    },
+    "torch_attention": {
+      "epochs": 20,
+      "width": 16
+    },
+    "torch_residual": {
+      "epochs": 20,
+      "width": 32
+    }
+  },
+  "model_errors": {},
+  "fit_warnings": {
+    "zero": [],
+    "historical_mean": [],
+    "ridge": [
+      "divide by zero encountered in matmul",
+      "invalid value encountered in matmul",
+      "overflow encountered in matmul"
+    ],
+    "elastic_net": [],
+    "random_forest": [],
+    "extra_trees": [],
+    "hist_gradient_boosting": [],
+    "svr": [],
+    "mlp": [
+      "Stochastic Optimizer: Maximum iterations (200) reached and the optimization hasn't converged yet.",
+      "divide by zero encountered in matmul",
+      "invalid value encountered in matmul",
+      "overflow encountered in matmul"
+    ],
+    "regime_mixture": [
+      "divide by zero encountered in matmul",
+      "invalid value encountered in matmul",
+      "overflow encountered in matmul"
+    ],
+    "xgboost": [],
+    "torch_attention": [],
+    "torch_residual": []
+  },
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "2.0.2",
+    "pandas": "2.3.3",
+    "scipy": "1.13.1",
+    "scikit-learn": "1.6.1",
+    "torch": "2.8.0",
+    "xgboost": "2.1.4",
+    "yfinance": "0.2.66",
+    "joblib": "1.5.3",
+    "threadpoolctl": "3.7.0"
+  },
+  "workers": 3,
+  "elapsed_seconds": 383.52
+}

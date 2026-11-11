@@ -1,0 +1,49 @@
+{
+  "description": "Hashes of published initial-study artifacts, excluding this manifest itself.",
+  "files": {
+    "all_holdout_predictions.csv": {
+      "bytes": 165082,
+      "sha256": "1961d768d24b2aebe4e9e04e0d8f7c2f9c82dfab18a7b321e609ff0b15cd5c4d"
+    },
+    "daily_returns.csv": {
+      "bytes": 28901,
+      "sha256": "c831a613a30905ce623f0b3a4697f32ac1661405143a20191d88d28b44656319"
+    },
+    "development_predictions.csv": {
+      "bytes": 248774,
+      "sha256": "f9a39903561bdc51df2521bf7dafee99003313bf087e9bd15c72e74b6e510a2a"
+    },
+    "holdout_metrics.csv": {
+      "bytes": 2008,
+      "sha256": "36f0340fbf1d828e5de4850c23819f78b6dc046e959e05d5d8134b43d6fd3786"
+    },
+    "holdout_predictions.csv": {
+      "bytes": 85261,
+      "sha256": "2afd49a157821e02de38073338e06d67e5039a26b359f7f6b5c7d5839a3e5ca2"
+    },
+    "latest_forecasts.csv": {
+      "bytes": 503,
+      "sha256": "2c24bad2b554eada09ca95d14f558ef6b2705f81bd5952cf656e12f5a249d100"
+    },
+    "leaderboard.csv": {
+      "bytes": 2027,
+      "sha256": "cf3a04224a53d4d6ab2415cdabede3d4cd41d59cf92906536e195c0082e0815e"
+    },
+    "model.joblib": {
+      "bytes": 349457,
+      "sha256": "2cdf0f12b0f62c7dc63a7e38365140ec0803953a1534431159b8b39ccc775bbb"
+    },
+    "report.html": {
+      "bytes": 35213,
+      "sha256": "aa74d6ecdf60de765d4fb81264ba563d350507a1bf50dd56d333667f8618498f"
+    },
+    "summary.json": {
+      "bytes": 12196,
+      "sha256": "adaa5d33776c4e71d499e0e7bba92d51817f99a581ac5b380ec8fb7582817053"
+    },
+    "tuning.json": {
+      "bytes": 28854,
+      "sha256": "5489c880b5f9dc96145fdcbd76b0808a14a27ef5aeaf37a0f1de09925784c135"
+    }
+  }
+}

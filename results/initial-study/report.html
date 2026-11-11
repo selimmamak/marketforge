@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light"><title>MarketForge · Research report</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eaf0f8;background:#0b121c;line-height:1.55}*{box-sizing:border-box}body{margin:0}main{max-width:1200px;margin:auto;padding:48px 30px 80px}header{border-bottom:1px solid #273648;padding-bottom:30px;margin-bottom:30px}.eyebrow{font-size:12px;letter-spacing:.19em;font-weight:700;color:#65ddbe;text-transform:uppercase}h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.04em;line-height:1.15;margin:14px 0}h2{font-size:22px;letter-spacing:-.02em;margin:0 0 18px}p{color:#acbbcf;max-width:88ch}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:28px 0}.card,section{background:#121d2b;border:1px solid #273648;border-radius:12px;padding:22px}.label{font-size:12px;color:#9cacc0;text-transform:uppercase;letter-spacing:.08em}.value{font-size:25px;font-weight:650;margin-top:9px;overflow-wrap:anywhere}section{margin-top:20px}.columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.columns section{min-width:0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 12px;border-bottom:1px solid #273648;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}thead{color:#a7b8cd;background:#182536}.metrics th{font-weight:400;color:#acbbcf;text-align:left;white-space:normal}.metrics td{font-variant-numeric:tabular-nums;white-space:normal;overflow-wrap:anywhere}.table-scroll{overflow-x:auto}.legend{display:flex;gap:24px;font-size:13px;margin-bottom:12px;flex-wrap:wrap}svg{width:100%;height:auto}details{margin-top:20px}summary{cursor:pointer;color:#65ddbe}pre{overflow:auto;color:#acbbcf;font-size:12px;padding:16px;background:#0b121c;border-radius:8px}a{color:#65ddbe}li{color:#acbbcf;margin:9px 0}footer{font-size:12px;color:#8c9bb1;margin-top:30px}@media(max-width:760px){main{padding:28px 16px}.cards,.columns{grid-template-columns:1fr}section,.card{padding:16px}}@media print{:root{color:#172437;background:white}.card,section{background:white;border-color:#ccd3db;break-inside:avoid}p,li,.metrics th{color:#344458}th,td{border-color:#ddd}thead{background:#eee;color:#172437}details{display:none}}
+</style></head><body><main>
+<header><div class="eyebrow">MarketForge / experiment review</div><h1>Forecasts measured against time.</h1><p>Model selection uses development data only. The final chronological holdout measures the frozen selection, with execution delayed until the following open.</p></header>
+<div class="cards"><div class="card"><div class="label">Selected on development</div><div class="value">Random Forest</div></div><div class="card"><div class="label">Development RMSE</div><div class="value">0.0117447</div></div><div class="card"><div class="label">Data source</div><div class="value">data/market.csv</div></div></div>
+<section><h2>Development model comparison</h2><p>Lower RMSE is better. Scores describe this dataset and evaluation period; they do not establish a universally best forecasting model.</p><div class='table-scroll'><table class="dataframe leaderboard">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Model</th>
+      <th>Observations</th>
+      <th>RMSE</th>
+      <th>MAE</th>
+      <th>Mean Error</th>
+      <th>Direction Accuracy</th>
+      <th>Spearman IC</th>
+      <th>R²</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Random Forest</td>
+      <td>756</td>
+      <td>0.0117447</td>
+      <td>0.00807318</td>
+      <td>-0.000233171</td>
+      <td>0.571429</td>
+      <td>0.0419126</td>
+      <td>0.00814711</td>
+    </tr>
+    <tr>
+      <td>Ridge</td>
+      <td>756</td>
+      <td>0.0117549</td>
+      <td>0.00807264</td>
+      <td>1.66421e-05</td>
+      <td>0.556878</td>
+      <td>0.104536</td>
+      <td>0.00642018</td>
+    </tr>
+    <tr>
+      <td>Elastic Net</td>
+      <td>756</td>
+      <td>0.0117696</td>
+      <td>0.0080905</td>
+      <td>9.11188e-05</td>
+      <td>0.562169</td>
+      <td>0.10121</td>
+      <td>0.00394406</td>
+    </tr>
+    <tr>
+      <td>Historical Mean</td>
+      <td>756</td>
+      <td>0.0117954</td>
+      <td>0.00807974</td>
+      <td>-8.69742e-05</td>
+      <td>0.579365</td>
+      <td>-0.0981129</td>
+      <td>-0.000439224</td>
+    </tr>
+    <tr>
+      <td>Zero Return</td>
+      <td>756</td>
+      <td>0.0118354</td>
+      <td>0.00818539</td>
+      <td>-0.00100295</td>
+      <td>0</td>
+      <td>0</td>
+      <td>-0.00723301</td>
+    </tr>
+    <tr>
+      <td>Feature Attention Transformer</td>
+      <td>756</td>
+      <td>0.0118368</td>
+      <td>0.0081386</td>
+      <td>0.000317058</td>
+      <td>0.560847</td>
+      <td>0.0054529</td>
+      <td>-0.00746628</td>
+    </tr>
+    <tr>
+      <td>Extra Trees</td>
+      <td>756</td>
+      <td>0.0118369</td>
+      <td>0.00814774</td>
+      <td>-0.000198285</td>
+      <td>0.564815</td>
+      <td>0.0123642</td>
+      <td>-0.00748198</td>
+    </tr>
+    <tr>
+      <td>Temporal Ensemble</td>
+      <td>756</td>
+      <td>0.0118454</td>
+      <td>0.00814749</td>
+      <td>7.1388e-06</td>
+      <td>0.550265</td>
+      <td>0.0338454</td>
+      <td>-0.00892888</td>
+    </tr>
+    <tr>
+      <td>Regime Mixture</td>
+      <td>756</td>
+      <td>0.0118833</td>
+      <td>0.008204</td>
+      <td>0.000100512</td>
+      <td>0.542328</td>
+      <td>0.0599107</td>
+      <td>-0.0154039</td>
+    </tr>
+    <tr>
+      <td>XGBoost</td>
+      <td>756</td>
+      <td>0.0118968</td>
+      <td>0.00821363</td>
+      <td>-1.69704e-05</td>
+      <td>0.562169</td>
+      <td>0.0142959</td>
+      <td>-0.0177063</td>
+    </tr>
+    <tr>
+      <td>Histogram Gradient Boosting</td>
+      <td>756</td>
+      <td>0.0119628</td>
+      <td>0.00828717</td>
+      <td>6.9028e-05</td>
+      <td>0.558201</td>
+      <td>0.0309879</td>
+      <td>-0.0290304</td>
+    </tr>
+    <tr>
+      <td>Support Vector Regression</td>
+      <td>756</td>
+      <td>0.0122607</td>
+      <td>0.00849317</td>
+      <td>0.000653814</td>
+      <td>0.543651</td>
+      <td>-0.0276629</td>
+      <td>-0.0809249</td>
+    </tr>
+    <tr>
+      <td>Gated Residual Network</td>
+      <td>756</td>
+      <td>0.0131272</td>
+      <td>0.00899489</td>
+      <td>0.000308277</td>
+      <td>0.526455</td>
+      <td>-0.000858812</td>
+      <td>-0.2391</td>
+    </tr>
+    <tr>
+      <td>Multilayer Perceptron</td>
+      <td>756</td>
+      <td>0.0133994</td>
+      <td>0.00949046</td>
+      <td>4.06945e-05</td>
+      <td>0.506614</td>
+      <td>0.00395457</td>
+      <td>-0.291025</td>
+    </tr>
+  </tbody>
+</table></div></section>
+<section><h2>Holdout strategy equity</h2><p>Equity starts at 1. Costs include entry, rebalancing, and final liquidation. This is a research simulation with idealized fills.</p><div class='legend'><span style='color:#65ddbe'>● Selected strategy</span><span style='color:#abafff'>● Equal-weight long benchmark</span></div><svg viewBox='0 0 940 310' role='img' aria-label='Cumulative net strategy and benchmark equity, starting from one unit'><line x1='68' x2='920' y1='272.00' y2='272.00' stroke='#273648'/><text x='56' y='276.00' text-anchor='end' fill='#9cacc0' font-size='12'>0.911</text><line x1='68' x2='920' y1='209.50' y2='209.50' stroke='#273648'/><text x='56' y='213.50' text-anchor='end' fill='#9cacc0' font-size='12'>0.978</text><line x1='68' x2='920' y1='147.00' y2='147.00' stroke='#273648'/><text x='56' y='151.00' text-anchor='end' fill='#9cacc0' font-size='12'>1.046</text><line x1='68' x2='920' y1='84.50' y2='84.50' stroke='#273648'/><text x='56' y='88.50' text-anchor='end' fill='#9cacc0' font-size='12'>1.114</text><line x1='68' x2='920' y1='22.00' y2='22.00' stroke='#273648'/><text x='56' y='26.00' text-anchor='end' fill='#9cacc0' font-size='12'>1.181</text><polyline points='68.00,189.56 74.76,191.35 81.52,183.26 88.29,181.65 95.05,180.31 101.81,184.37 108.57,176.40 115.33,168.16 122.10,159.67 128.86,154.24 135.62,154.49 142.38,153.38 149.14,139.87 155.90,152.84 162.67,146.76 169.43,137.37 176.19,144.42 182.95,148.09 189.71,163.46 196.48,173.68 203.24,189.54 210.00,188.22 216.76,176.71 223.52,169.19 230.29,168.89 237.05,162.17 243.81,159.73 250.57,159.85 257.33,174.80 264.10,176.30 270.86,182.25 277.62,204.75 284.38,199.25 291.14,206.19 297.90,207.46 304.67,206.07 311.43,196.99 318.19,205.18 324.95,205.51 331.71,210.75 338.48,204.37 345.24,206.39 352.00,206.98 358.76,206.69 365.52,209.59 372.29,222.04 379.05,218.20 385.81,215.86 392.57,214.60 399.33,227.24 406.10,228.13 412.86,218.14 419.62,227.18 426.38,227.11 433.14,209.74 439.90,217.31 446.67,227.46 453.43,225.74 460.19,229.49 466.95,238.47 473.71,235.81 480.48,232.93 487.24,232.03 494.00,228.74 500.76,231.23 507.52,227.31 514.29,229.87 521.05,238.61 527.81,236.61 534.57,244.73 541.33,241.67 548.10,243.96 554.86,242.71 561.62,244.18 568.38,238.12 575.14,230.73 581.90,234.20 588.67,244.03 595.43,237.51 602.19,234.12 608.95,225.73 615.71,236.69 622.48,241.29 629.24,247.81 636.00,235.08 642.76,238.57 649.52,233.60 656.29,233.32 663.05,226.83 669.81,224.51 676.57,220.95 683.33,207.15 690.10,207.59 696.86,219.07 703.62,213.72 710.38,210.32 717.14,213.80 723.90,216.27 730.67,214.35 737.43,207.25 744.19,207.57 750.95,197.48 757.71,198.49 764.48,199.21 771.24,202.17 778.00,195.15 784.76,192.79 791.52,194.20 798.29,205.91 805.05,198.98 811.81,210.18 818.57,210.98 825.33,208.08 832.10,208.55 838.86,210.51 845.62,208.56 852.38,203.02 859.14,196.81 865.90,196.34 872.67,209.75 879.43,214.24 886.19,237.06 892.95,209.33 899.71,198.26 906.48,221.49 913.24,207.32 920.00,197.80' fill='none' stroke='#65ddbe' stroke-width='2.4'/><polyline points='68.00,189.56 74.76,194.50 81.52,185.71 88.29,183.61 95.05,180.63 101.81,181.17 108.57,186.64 115.33,175.84 122.10,169.36 128.86,164.67 135.62,166.14 142.38,164.45 149.14,147.94 155.90,132.02 162.67,140.91 169.43,138.22 176.19,146.24 182.95,152.39 189.71,170.42 196.48,178.01 203.24,201.56 210.00,203.35 216.76,194.04 223.52,182.35 230.29,179.91 237.05,181.98 243.81,191.39 250.57,191.54 257.33,205.87 264.10,207.73 270.86,214.71 277.62,236.74 284.38,210.49 291.14,214.07 297.90,195.64 304.67,193.31 311.43,182.80 318.19,174.93 324.95,187.75 331.71,188.86 338.48,175.27 345.24,174.43 352.00,179.50 358.76,171.38 365.52,161.61 372.29,170.98 379.05,166.80 385.81,168.45 392.57,165.42 399.33,180.88 406.10,184.28 412.86,170.82 419.62,172.17 426.38,172.24 433.14,151.72 439.90,156.52 446.67,138.68 453.43,130.97 460.19,106.51 466.95,113.60 473.71,106.90 480.48,107.00 487.24,104.86 494.00,107.82 500.76,112.55 507.52,105.48 514.29,109.39 521.05,119.45 527.81,117.55 534.57,113.82 541.33,118.72 548.10,119.81 554.86,118.21 561.62,118.82 568.38,110.82 575.14,98.39 581.90,96.72 588.67,109.75 595.43,100.70 602.19,98.19 608.95,86.89 615.71,104.63 622.48,109.10 629.24,115.67 636.00,98.37 642.76,98.24 649.52,97.89 656.29,100.12 663.05,91.90 669.81,88.37 676.57,86.76 683.33,69.40 690.10,70.36 696.86,83.69 703.62,77.92 710.38,72.22 717.14,73.98 723.90,77.17 730.67,73.51 737.43,65.99 744.19,66.20 750.95,54.79 757.71,54.69 764.48,55.51 771.24,60.34 778.00,50.68 784.76,46.19 791.52,47.32 798.29,61.36 805.05,53.12 811.81,67.59 818.57,67.78 825.33,65.99 832.10,64.61 838.86,75.42 845.62,71.85 852.38,65.27 859.14,57.97 865.90,56.65 872.67,74.62 879.43,79.64 886.19,106.29 892.95,71.85 899.71,58.24 906.48,103.60 913.24,85.80 920.00,76.39' fill='none' stroke='#abafff' stroke-width='2.4'/><text x='68' y='302' text-anchor='start' fill='#9cacc0' font-size='12'>2026-05-13</text><text x='920' y='302' text-anchor='end' fill='#9cacc0' font-size='12'>2026-11-10</text></svg></section>
+<div class="columns"><section><h2>Frozen model: holdout forecasts</h2><table class='metrics'><tbody><tr><th>Observations</th><td>504</td></tr><tr><th>RMSE</th><td>0.0170931</td></tr><tr><th>MAE</th><td>0.0116229</td></tr><tr><th>Mean Error</th><td>-0.000331134</td></tr><tr><th>Direction Accuracy</th><td>0.525794</td></tr><tr><th>Spearman IC</th><td>-0.0209438</td></tr><tr><th>R²</th><td>-0.0351676</td></tr></tbody></table></section><section><h2>Holdout strategy</h2><table class='metrics'><tbody><tr><th>Total Return</th><td>-0.00892311</td></tr><tr><th>Annualized Return</th><td>-0.0177666</td></tr><tr><th>Annualized Volatility</th><td>0.142101</td></tr><tr><th>Sharpe</th><td>-0.0555729</td></tr><tr><th>Max Drawdown</th><td>-0.113102</td></tr><tr><th>Positive Period Fraction</th><td>0.52381</td></tr><tr><th>Periods</th><td>126</td></tr><tr><th>Mean Turnover</th><td>0.288861</td></tr><tr><th>Sum of Period Cost Fractions</th><td>0.0181983</td></tr><tr><th>Mean Gross Exposure</th><td>1</td></tr><tr><th>Cost (Basis Points)</th><td>5</td></tr><tr><th>Benchmark Name</th><td>Equal-weight long, rebalanced each session</td></tr></tbody></table></section></div>
+<div class="columns"><section><h2>Uncertainty calibration</h2><table class='metrics'><tbody><tr><th>Nominal Coverage</th><td>0.9</td></tr><tr><th>Holdout Coverage</th><td>0.871032</td></tr><tr><th>Radius</th><td>0.0243574</td></tr><tr><th>Mean Width</th><td>0.0487147</td></tr><tr><th>Calibration Rows</th><td>252</td></tr><tr><th>Interpretation</th><td>Empirical coverage; serial dependence invalidates IID guarantees.</td></tr></tbody></table><p>Calibration uses an earlier, separate chronological segment. Serial dependence and changing regimes can invalidate exchangeability; inspect realized holdout coverage.</p></section><section><h2>Paired block bootstrap</h2><table class='metrics'><tbody><tr><th>Mean Delta</th><td>0.000263677</td></tr><tr><th>Bootstrap Mean Delta</th><td>0.000257209</td></tr><tr><th>95% CI Lower Bound</th><td>-0.000167015</td></tr><tr><th>95% CI Upper Bound</th><td>0.00078002</td></tr><tr><th>Confidence</th><td>0.95</td></tr><tr><th>Sampling Units</th><td>126</td></tr><tr><th>Block Size</th><td>20</td></tr><tr><th>Requested Block Size</th><td>20</td></tr><tr><th>Bootstrap Samples</th><td>1000</td></tr><tr><th>Date Clustered</th><td>True</td></tr></tbody></table><p>RMSE difference is selected model minus reference. Negative values favor the selected model. Date clusters preserve the panel structure; contiguous blocks preserve some serial dependence. This interval does not adjust for searching many models.</p></section></div>
+<section><h2>Evaluation assumptions</h2><ul><li>Features are available at the signal close. Targets run from the next open to a later open; training labels overlapping an evaluation boundary are removed.</li><li>Hyperparameters and the winning model are selected inside the research segment. Calibration and the final holdout do not tune the selection.</li><li>Simple-return forecast accuracy and trading profitability answer different questions. Volatility-scaled directional positions do not optimize portfolio covariance.</li><li>Adjusted historical prices are retrospective. A fixed present-day ticker list has survivorship and selection bias. Delisted securities and point-in-time corporate actions require a specialist data source.</li><li>Borrow costs, financing, cash yield, taxes, order-book liquidity, and nonlinear market impact are omitted. Shorting availability and idealized open fills are not guaranteed.</li></ul></section>
+<section><h2>Other holdout results. Diagnostic only.</h2><p>These results do not alter the selected model. Repeatedly inspecting and changing the experiment turns this holdout into development data.</p><div class='table-scroll'><table class="dataframe leaderboard">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Model</th>
+      <th>Observations</th>
+      <th>RMSE</th>
+      <th>MAE</th>
+      <th>Mean Error</th>
+      <th>Direction Accuracy</th>
+      <th>Spearman IC</th>
+      <th>R²</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Zero Return</td>
+      <td>504</td>
+      <td>0.0168294</td>
+      <td>0.0115268</td>
+      <td>-0.000990653</td>
+      <td>0</td>
+      <td>0</td>
+      <td>-0.00347708</td>
+    </tr>
+    <tr>
+      <td>Historical Mean</td>
+      <td>504</td>
+      <td>0.0168005</td>
+      <td>0.0115136</td>
+      <td>-9.69166e-05</td>
+      <td>0.529762</td>
+      <td>0</td>
+      <td>-3.32788e-05</td>
+    </tr>
+    <tr>
+      <td>Ridge</td>
+      <td>504</td>
+      <td>0.016903</td>
+      <td>0.0116162</td>
+      <td>-4.19937e-05</td>
+      <td>0.52381</td>
+      <td>0.0144024</td>
+      <td>-0.0122697</td>
+    </tr>
+    <tr>
+      <td>Elastic Net</td>
+      <td>504</td>
+      <td>0.0168701</td>
+      <td>0.0115899</td>
+      <td>-6.73756e-05</td>
+      <td>0.531746</td>
+      <td>0.0179393</td>
+      <td>-0.00833604</td>
+    </tr>
+    <tr>
+      <td>Random Forest</td>
+      <td>504</td>
+      <td>0.0170931</td>
+      <td>0.0116229</td>
+      <td>-0.000331134</td>
+      <td>0.525794</td>
+      <td>-0.0209438</td>
+      <td>-0.0351676</td>
+    </tr>
+    <tr>
+      <td>Extra Trees</td>
+      <td>504</td>
+      <td>0.0168539</td>
+      <td>0.011549</td>
+      <td>-0.00020323</td>
+      <td>0.52381</td>
+      <td>-0.00638859</td>
+      <td>-0.0064038</td>
+    </tr>
+    <tr>
+      <td>Histogram Gradient Boosting</td>
+      <td>504</td>
+      <td>0.0171781</td>
+      <td>0.0116141</td>
+      <td>-0.000280445</td>
+      <td>0.517857</td>
+      <td>0.00679033</td>
+      <td>-0.0454902</td>
+    </tr>
+    <tr>
+      <td>Support Vector Regression</td>
+      <td>504</td>
+      <td>0.0168695</td>
+      <td>0.0114912</td>
+      <td>0.000628858</td>
+      <td>0.525794</td>
+      <td>0.0599453</td>
+      <td>-0.00826335</td>
+    </tr>
+    <tr>
+      <td>Multilayer Perceptron</td>
+      <td>504</td>
+      <td>0.0184616</td>
+      <td>0.0125944</td>
+      <td>-0.000273841</td>
+      <td>0.521825</td>
+      <td>0.0499299</td>
+      <td>-0.207557</td>
+    </tr>
+    <tr>
+      <td>Regime Mixture</td>
+      <td>504</td>
+      <td>0.0168839</td>
+      <td>0.0115336</td>
+      <td>-2.76111e-06</td>
+      <td>0.52381</td>
+      <td>0.0363443</td>
+      <td>-0.00998704</td>
+    </tr>
+    <tr>
+      <td>XGBoost</td>
+      <td>504</td>
+      <td>0.0169867</td>
+      <td>0.0115574</td>
+      <td>-0.000284489</td>
+      <td>0.5</td>
+      <td>-0.00117391</td>
+      <td>-0.0223301</td>
+    </tr>
+    <tr>
+      <td>Feature Attention Transformer</td>
+      <td>504</td>
+      <td>0.0169282</td>
+      <td>0.011547</td>
+      <td>-8.30569e-05</td>
+      <td>0.507937</td>
+      <td>0.0159578</td>
+      <td>-0.0152991</td>
+    </tr>
+    <tr>
+      <td>Gated Residual Network</td>
+      <td>504</td>
+      <td>0.0184991</td>
+      <td>0.012874</td>
+      <td>0.000209652</td>
+      <td>0.53373</td>
+      <td>0.0357258</td>
+      <td>-0.212473</td>
+    </tr>
+    <tr>
+      <td>Temporal Ensemble</td>
+      <td>504</td>
+      <td>0.0168673</td>
+      <td>0.0114968</td>
+      <td>-0.00014662</td>
+      <td>0.531746</td>
+      <td>0.0599334</td>
+      <td>-0.00800154</td>
+    </tr>
+  </tbody>
+</table></div></section>
+
+<details><summary>Run manifest and complete metrics</summary><pre>{
+  &quot;winner&quot;: &quot;random_forest&quot;,
+  &quot;selection_metric&quot;: &quot;pooled development out-of-fold RMSE&quot;,
+  &quot;development_rmse&quot;: 0.01174470678222672,
+  &quot;holdout_metrics&quot;: {
+    &quot;n_observations&quot;: 504,
+    &quot;rmse&quot;: 0.017093065625586903,
+    &quot;mae&quot;: 0.011622943387768571,
+    &quot;mean_error&quot;: -0.00033113385555111834,
+    &quot;direction_accuracy&quot;: 0.5257936507936508,
+    &quot;spearman_ic&quot;: -0.020943832525825722,
+    &quot;r2&quot;: -0.035167615825912435
+  },
+  &quot;backtest_metrics&quot;: {
+    &quot;total_return&quot;: -0.00892311342069707,
+    &quot;annualized_return&quot;: -0.01776660488827638,
+    &quot;annualized_volatility&quot;: 0.142100548313706,
+    &quot;sharpe&quot;: -0.0555729100602574,
+    &quot;max_drawdown&quot;: -0.11310189833352147,
+    &quot;positive_period_fraction&quot;: 0.5238095238095238,
+    &quot;periods&quot;: 126,
+    &quot;mean_turnover&quot;: 0.28886128717600046,
+    &quot;sum_cost_as_period_equity_fraction&quot;: 0.018198261092088025,
+    &quot;mean_gross_exposure&quot;: 1.0,
+    &quot;cost_bps&quot;: 5.0,
+    &quot;benchmark&quot;: {
+      &quot;total_return&quot;: 0.12244776965467818,
+      &quot;annualized_return&quot;: 0.2598889956027651,
+      &quot;annualized_volatility&quot;: 0.1761174996719895,
+      &quot;sharpe&quot;: 1.3998651381987772,
+      &quot;max_drawdown&quot;: -0.10666612042999324,
+      &quot;positive_period_fraction&quot;: 0.5317460317460317,
+      &quot;periods&quot;: 126
+    },
+    &quot;benchmark_name&quot;: &quot;Equal-weight long, rebalanced each session&quot;
+  },
+  &quot;holdout_leaderboard&quot;: [
+    {
+      &quot;model&quot;: &quot;zero&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016829389022166106,
+      &quot;mae&quot;: 0.01152680065482931,
+      &quot;mean_error&quot;: -0.0009906534967566028,
+      &quot;direction_accuracy&quot;: 0.0,
+      &quot;spearman_ic&quot;: 0.0,
+      &quot;r2&quot;: -0.003477077019389485
+    },
+    {
+      &quot;model&quot;: &quot;historical_mean&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.01680048610428525,
+      &quot;mae&quot;: 0.011513561153572195,
+      &quot;mean_error&quot;: -9.691662144729323e-05,
+      &quot;direction_accuracy&quot;: 0.5297619047619048,
+      &quot;spearman_ic&quot;: 0.0,
+      &quot;r2&quot;: -3.327877175829386e-05
+    },
+    {
+      &quot;model&quot;: &quot;ridge&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016902959469306228,
+      &quot;mae&quot;: 0.011616188928545629,
+      &quot;mean_error&quot;: -4.199372413944983e-05,
+      &quot;direction_accuracy&quot;: 0.5238095238095238,
+      &quot;spearman_ic&quot;: 0.014402411556122954,
+      &quot;r2&quot;: -0.012269746152066663
+    },
+    {
+      &quot;model&quot;: &quot;elastic_net&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.01687008486043931,
+      &quot;mae&quot;: 0.011589933964444516,
+      &quot;mean_error&quot;: -6.737556339649962e-05,
+      &quot;direction_accuracy&quot;: 0.5317460317460317,
+      &quot;spearman_ic&quot;: 0.017939323043352336,
+      &quot;r2&quot;: -0.008336043201791599
+    },
+    {
+      &quot;model&quot;: &quot;random_forest&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.017093065625586903,
+      &quot;mae&quot;: 0.011622943387768571,
+      &quot;mean_error&quot;: -0.00033113385555111834,
+      &quot;direction_accuracy&quot;: 0.5257936507936508,
+      &quot;spearman_ic&quot;: -0.020943832525825722,
+      &quot;r2&quot;: -0.035167615825912435
+    },
+    {
+      &quot;model&quot;: &quot;extra_trees&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016853913331843974,
+      &quot;mae&quot;: 0.011548968322091308,
+      &quot;mean_error&quot;: -0.00020322988299988434,
+      &quot;direction_accuracy&quot;: 0.5238095238095238,
+      &quot;spearman_ic&quot;: -0.006388590174318803,
+      &quot;r2&quot;: -0.006403804006806624
+    },
+    {
+      &quot;model&quot;: &quot;hist_gradient_boosting&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.017178078966595015,
+      &quot;mae&quot;: 0.011614124209200173,
+      &quot;mean_error&quot;: -0.00028044530594864705,
+      &quot;direction_accuracy&quot;: 0.5178571428571429,
+      &quot;spearman_ic&quot;: 0.006790330985226074,
+      &quot;r2&quot;: -0.04549015288052738
+    },
+    {
+      &quot;model&quot;: &quot;svr&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.0168694767453135,
+      &quot;mae&quot;: 0.011491248021093189,
+      &quot;mean_error&quot;: 0.0006288581863429872,
+      &quot;direction_accuracy&quot;: 0.5257936507936508,
+      &quot;spearman_ic&quot;: 0.05994527882211682,
+      &quot;r2&quot;: -0.008263349631708161
+    },
+    {
+      &quot;model&quot;: &quot;mlp&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.018461564785691546,
+      &quot;mae&quot;: 0.01259440763459087,
+      &quot;mean_error&quot;: -0.00027384130407627955,
+      &quot;direction_accuracy&quot;: 0.5218253968253969,
+      &quot;spearman_ic&quot;: 0.049929934771381156,
+      &quot;r2&quot;: -0.20755737412748698
+    },
+    {
+      &quot;model&quot;: &quot;regime_mixture&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016883890336273164,
+      &quot;mae&quot;: 0.011533623919306525,
+      &quot;mean_error&quot;: -2.761111895263492e-06,
+      &quot;direction_accuracy&quot;: 0.5238095238095238,
+      &quot;spearman_ic&quot;: 0.036344310375371544,
+      &quot;r2&quot;: -0.009987043166697296
+    },
+    {
+      &quot;model&quot;: &quot;xgboost&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.01698674590002835,
+      &quot;mae&quot;: 0.01155738665826831,
+      &quot;mean_error&quot;: -0.00028448910700721637,
+      &quot;direction_accuracy&quot;: 0.5,
+      &quot;spearman_ic&quot;: -0.001173908927388053,
+      &quot;r2&quot;: -0.022330076464248227
+    },
+    {
+      &quot;model&quot;: &quot;torch_attention&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016928232352158745,
+      &quot;mae&quot;: 0.011546957980324894,
+      &quot;mean_error&quot;: -8.305691564108952e-05,
+      &quot;direction_accuracy&quot;: 0.5079365079365079,
+      &quot;spearman_ic&quot;: 0.01595781276508793,
+      &quot;r2&quot;: -0.015299050016702287
+    },
+    {
+      &quot;model&quot;: &quot;torch_residual&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.018499103304781016,
+      &quot;mae&quot;: 0.012873996312934134,
+      &quot;mean_error&quot;: 0.00020965193950650508,
+      &quot;direction_accuracy&quot;: 0.5337301587301587,
+      &quot;spearman_ic&quot;: 0.035725767975831955,
+      &quot;r2&quot;: -0.21247310055546076
+    },
+    {
+      &quot;model&quot;: &quot;temporal_ensemble&quot;,
+      &quot;n_observations&quot;: 504,
+      &quot;rmse&quot;: 0.016867286368355192,
+      &quot;mae&quot;: 0.011496761069851669,
+      &quot;mean_error&quot;: -0.00014661985788004742,
+      &quot;direction_accuracy&quot;: 0.5317460317460317,
+      &quot;spearman_ic&quot;: 0.05993337476320767,
+      &quot;r2&quot;: -0.008001535532186299
+    }
+  ],
+  &quot;bootstrap&quot;: {
+    &quot;mean_delta&quot;: 0.0002636766034207899,
+    &quot;bootstrap_mean_delta&quot;: 0.0002572090452601356,
+    &quot;ci_low&quot;: -0.0001670149060496521,
+    &quot;ci_high&quot;: 0.0007800195249668335,
+    &quot;confidence&quot;: 0.95,
+    &quot;sampling_units&quot;: 126,
+    &quot;block_size&quot;: 20,
+    &quot;requested_block_size&quot;: 20,
+    &quot;n_bootstrap&quot;: 1000,
+    &quot;date_clustered&quot;: true
+  },
+  &quot;interval&quot;: {
+    &quot;nominal_coverage&quot;: 0.9,
+    &quot;holdout_coverage&quot;: 0.871031746031746,
+    &quot;radius&quot;: 0.024357370095057933,
+    &quot;mean_width&quot;: 0.04871474019011587,
+    &quot;calibration_rows&quot;: 252,
+    &quot;interpretation&quot;: &quot;Empirical coverage; serial dependence invalidates IID guarantees.&quot;
+  },
+  &quot;config&quot;: {
+    &quot;seed&quot;: 42,
+    &quot;horizon&quot;: 1,
+    &quot;holdout_size&quot;: 126,
+    &quot;calibration_size&quot;: 63,
+    &quot;n_splits&quot;: 3,
+    &quot;test_size&quot;: 63,
+    &quot;min_train_size&quot;: 252,
+    &quot;inner_splits&quot;: 2,
+    &quot;inner_test_size&quot;: 42,
+    &quot;inner_min_train_size&quot;: 126,
+    &quot;embargo&quot;: 2,
+    &quot;cost_bps&quot;: 5.0,
+    &quot;target_vol&quot;: 0.1,
+    &quot;max_leverage&quot;: 1.0,
+    &quot;signal_threshold&quot;: 0.0,
+    &quot;interval_alpha&quot;: 0.1,
+    &quot;bootstrap_samples&quot;: 1000,
+    &quot;bootstrap_block_size&quot;: 20,
+    &quot;include_neural&quot;: true,
+    &quot;include_boosting&quot;: true,
+    &quot;quick&quot;: false,
+    &quot;models&quot;: null
+  },
+  &quot;data_source&quot;: &quot;data/market.csv&quot;,
+  &quot;dataset&quot;: {
+    &quot;price_rows&quot;: 10920,
+    &quot;labeled_rows&quot;: 10672,
+    &quot;tickers&quot;: [
+      &quot;AAPL&quot;,
+      &quot;MSFT&quot;,
+      &quot;QQQ&quot;,
+      &quot;SPY&quot;
+    ],
+    &quot;features&quot;: 37,
+    &quot;sha256&quot;: &quot;887cd79effb1e8b262f92cd25ec3e08b212f575fd5d42bc42b710aab56b9cb86&quot;
+  },
+  &quot;timeline&quot;: {
+    &quot;research&quot;: {
+      &quot;start&quot;: &quot;2016-03-31 00:00:00&quot;,
+      &quot;end&quot;: &quot;2026-02-02 00:00:00&quot;,
+      &quot;rows&quot;: 9900
+    },
+    &quot;calibration&quot;: {
+      &quot;start&quot;: &quot;2026-02-05 00:00:00&quot;,
+      &quot;end&quot;: &quot;2026-05-06 00:00:00&quot;,
+      &quot;rows&quot;: 252
+    },
+    &quot;holdout&quot;: {
+      &quot;start&quot;: &quot;2026-05-11 00:00:00&quot;,
+      &quot;end&quot;: &quot;2026-11-06 00:00:00&quot;,
+      &quot;rows&quot;: 504
+    }
+  },
+  &quot;fold_boundaries&quot;: [
+    {
+      &quot;fold&quot;: 0,
+      &quot;train_start&quot;: &quot;2016-03-31 00:00:00&quot;,
+      &quot;train_end&quot;: &quot;2025-04-29 00:00:00&quot;,
+      &quot;latest_train_label&quot;: &quot;2025-05-01 00:00:00&quot;,
+      &quot;test_start&quot;: &quot;2025-05-02 00:00:00&quot;,
+      &quot;test_end&quot;: &quot;2025-08-01 00:00:00&quot;,
+      &quot;train_rows&quot;: 9136,
+      &quot;test_rows&quot;: 252
+    },
+    {
+      &quot;fold&quot;: 1,
+      &quot;train_start&quot;: &quot;2016-03-31 00:00:00&quot;,
+      &quot;train_end&quot;: &quot;2025-07-30 00:00:00&quot;,
+      &quot;latest_train_label&quot;: &quot;2025-08-01 00:00:00&quot;,
+      &quot;test_start&quot;: &quot;2025-08-04 00:00:00&quot;,
+      &quot;test_end&quot;: &quot;2025-10-30 00:00:00&quot;,
+      &quot;train_rows&quot;: 9388,
+      &quot;test_rows&quot;: 252
+    },
+    {
+      &quot;fold&quot;: 2,
+      &quot;train_start&quot;: &quot;2016-03-31 00:00:00&quot;,
+      &quot;train_end&quot;: &quot;2025-10-28 00:00:00&quot;,
+      &quot;latest_train_label&quot;: &quot;2025-10-30 00:00:00&quot;,
+      &quot;test_start&quot;: &quot;2025-10-31 00:00:00&quot;,
+      &quot;test_end&quot;: &quot;2026-02-02 00:00:00&quot;,
+      &quot;train_rows&quot;: 9640,
+      &quot;test_rows&quot;: 252
+    }
+  ],
+  &quot;ensemble_weights&quot;: {
+    &quot;zero&quot;: 0.07979482292629862,
+    &quot;historical_mean&quot;: 0.0803366942862129,
+    &quot;ridge&quot;: 0.0808913170198876,
+    &quot;elastic_net&quot;: 0.08069022684210196,
+    &quot;random_forest&quot;: 0.08103215827921417,
+    &quot;extra_trees&quot;: 0.07977510428735494,
+    &quot;hist_gradient_boosting&quot;: 0.07810457167233806,
+    &quot;svr&quot;: 0.074354823437279,
+    &quot;mlp&quot;: 0.062254386675080015,
+    &quot;regime_mixture&quot;: 0.07915272034407267,
+    &quot;xgboost&quot;: 0.07897365122692934,
+    &quot;torch_attention&quot;: 0.07977634721799705,
+    &quot;torch_residual&quot;: 0.0648631757852335
+  },
+  &quot;ensemble_fold_weights&quot;: [
+    {
+      &quot;fold&quot;: 0,
+      &quot;weights&quot;: [
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693,
+        0.07692307692307693
+      ]
+    },
+    {
+      &quot;fold&quot;: 1,
+      &quot;weights&quot;: [
+        0.08105505031678183,
+        0.08296224784715708,
+        0.08284445921465093,
+        0.08217138004855679,
+        0.08241233969008252,
+        0.08189972784731159,
+        0.07655330064349976,
+        0.07065777738898942,
+        0.06064340130698866,
+        0.07874514170515928,
+        0.07900626267650103,
+        0.08298590773817496,
+        0.05806300357614608
+      ]
+    },
+    {
+      &quot;fold&quot;: 2,
+      &quot;weights&quot;: [
+        0.07962092327245451,
+        0.08142876493788696,
+        0.08186885639489039,
+        0.08155077343983753,
+        0.08092275053991323,
+        0.07990550352209969,
+        0.07714676849550184,
+        0.07321549142552466,
+        0.06167516761828837,
+        0.07845345684330213,
+        0.0787910345446567,
+        0.08151828646953967,
+        0.0639022224961043
+      ]
+    }
+  ],
+  &quot;selected_parameters&quot;: {
+    &quot;zero&quot;: {},
+    &quot;historical_mean&quot;: {},
+    &quot;ridge&quot;: {
+      &quot;alpha&quot;: 10.0
+    },
+    &quot;elastic_net&quot;: {
+      &quot;alpha&quot;: 0.01,
+      &quot;l1_ratio&quot;: 0.1
+    },
+    &quot;random_forest&quot;: {
+      &quot;max_depth&quot;: 12
+    },
+    &quot;extra_trees&quot;: {
+      &quot;max_depth&quot;: 6
+    },
+    &quot;hist_gradient_boosting&quot;: {
+      &quot;max_leaf_nodes&quot;: 7
+    },
+    &quot;svr&quot;: {
+      &quot;C&quot;: 0.1
+    },
+    &quot;mlp&quot;: {
+      &quot;hidden_layer_sizes&quot;: [
+        64,
+        32
+      ],
+      &quot;alpha&quot;: 1.0
+    },
+    &quot;regime_mixture&quot;: {
+      &quot;n_regimes&quot;: 3,
+      &quot;alpha&quot;: 100.0
+    },
+    &quot;xgboost&quot;: {
+      &quot;max_depth&quot;: 5,
+      &quot;reg_lambda&quot;: 30.0
+    },
+    &quot;torch_attention&quot;: {
+      &quot;epochs&quot;: 20,
+      &quot;width&quot;: 16
+    },
+    &quot;torch_residual&quot;: {
+      &quot;epochs&quot;: 20,
+      &quot;width&quot;: 32
+    }
+  },
+  &quot;model_errors&quot;: {},
+  &quot;fit_warnings&quot;: {
+    &quot;zero&quot;: [],
+    &quot;historical_mean&quot;: [],
+    &quot;ridge&quot;: [
+      &quot;divide by zero encountered in matmul&quot;,
+      &quot;invalid value encountered in matmul&quot;,
+      &quot;overflow encountered in matmul&quot;
+    ],
+    &quot;elastic_net&quot;: [],
+    &quot;random_forest&quot;: [],
+    &quot;extra_trees&quot;: [],
+    &quot;hist_gradient_boosting&quot;: [],
+    &quot;svr&quot;: [],
+    &quot;mlp&quot;: [
+      &quot;Stochastic Optimizer: Maximum iterations (200) reached and the optimization hasn&#x27;t converged yet.&quot;,
+      &quot;divide by zero encountered in matmul&quot;,
+      &quot;invalid value encountered in matmul&quot;,
+      &quot;overflow encountered in matmul&quot;
+    ],
+    &quot;regime_mixture&quot;: [
+      &quot;divide by zero encountered in matmul&quot;,
+      &quot;invalid value encountered in matmul&quot;,
+      &quot;overflow encountered in matmul&quot;
+    ],
+    &quot;xgboost&quot;: [],
+    &quot;torch_attention&quot;: [],
+    &quot;torch_residual&quot;: []
+  },
+  &quot;versions&quot;: {
+    &quot;python&quot;: &quot;3.9.6&quot;,
+    &quot;numpy&quot;: &quot;2.0.2&quot;,
+    &quot;pandas&quot;: &quot;2.3.3&quot;,
+    &quot;scipy&quot;: &quot;1.13.1&quot;,
+    &quot;scikit-learn&quot;: &quot;1.6.1&quot;,
+    &quot;torch&quot;: &quot;2.8.0&quot;,
+    &quot;xgboost&quot;: &quot;2.1.4&quot;,
+    &quot;yfinance&quot;: &quot;0.2.66&quot;,
+    &quot;joblib&quot;: &quot;1.5.3&quot;,
+    &quot;threadpoolctl&quot;: &quot;3.7.0&quot;
+  },
+  &quot;workers&quot;: 3,
+  &quot;elapsed_seconds&quot;: 383.52
+}</pre></details>
+<footer>MarketForge · Reproducible forecasting research · Local report; no external scripts, stylesheets, fonts, or tracking.</footer>
+</main></body></html>

@@ -6,6 +6,11 @@ MarketForge compares statistical baselines, regularized linear models, tree ense
 
 The aim is evidence, not a predetermined winner. A simple baseline beating a complex model is a useful result. Forecasting accuracy and trading profitability are separate questions.
 
+The [initial real-data study](results/README.md) evaluated every model on AAPL,
+MSFT, QQQ, and SPY. Random Forest won development validation but did not beat the
+zero-return baseline on the final holdout. The complete results and saved model
+are included.
+
 ## Quick start
 
 Python 3.10-3.12 is recommended; the core also supports Python 3.9.
