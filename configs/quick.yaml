@@ -1,0 +1,15 @@
+seed: 42
+horizon: 1
+holdout_size: 63
+calibration_size: 42
+n_splits: 3
+test_size: 42
+min_train_size: 252
+inner_splits: 1
+inner_test_size: 42
+inner_min_train_size: 126
+embargo: 2
+include_boosting: false
+include_neural: false
+quick: true
+bootstrap_samples: 300

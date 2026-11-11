@@ -1,0 +1,17 @@
+{
+  "provider": "Yahoo Finance via yfinance",
+  "adjusted": true,
+  "tickers": [
+    "AAPL",
+    "MSFT",
+    "SPY",
+    "QQQ"
+  ],
+  "requested_start": "2016-01-01",
+  "requested_end_exclusive": "2026-11-11",
+  "retrieved_at_utc": "2026-11-11T04:35:20.781550+00:00",
+  "actual_start": "2016-01-04 00:00:00",
+  "actual_end": "2026-11-10 00:00:00",
+  "rows": 10920,
+  "sha256": "4f71d21baf998e7467ef5f9c2baea600c3a342b1fa77ed4f7f6a03b4aef68559"
+}

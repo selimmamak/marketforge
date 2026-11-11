@@ -1,0 +1,21 @@
+# Full grids with nested chronological tuning. Start with quick.yaml to check setup.
+seed: 42
+horizon: 1
+holdout_size: 126
+calibration_size: 63
+n_splits: 3
+test_size: 63
+min_train_size: 252
+inner_splits: 2
+inner_test_size: 42
+inner_min_train_size: 126
+embargo: 2
+include_boosting: true
+include_neural: true
+quick: false
+cost_bps: 5.0
+target_vol: 0.10
+max_leverage: 1.0
+interval_alpha: 0.10
+bootstrap_samples: 1000
+bootstrap_block_size: 20
